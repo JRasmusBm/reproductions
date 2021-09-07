@@ -1,5 +1,8 @@
 # Issue Description
 
+Link to issue: [compose #8581 - entryfile option in compose file breaks in
+docker-compose 2](https://github.com/docker/compose/issues/8581)
+
 This branch is a minimal reproduction of an issue we have been having at work
 with `docker-compose` version 2. The above configuration works fine in version
 1.27.4, but breaks in version 2.
