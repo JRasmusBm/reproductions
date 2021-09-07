@@ -1,0 +1,16 @@
+version: "3"
+
+services:
+
+  bash:
+    build: .
+    image: example
+    entrypoint: ""
+    command:
+        sh -c "echo bash"
+
+  python:
+    build: .
+    image: example
+    command:
+      ['-c', 'print("python")']
