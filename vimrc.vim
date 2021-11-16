@@ -33,7 +33,8 @@ cmp.setup {
   },
 
   mapping = {
-    ['<CR>'] = cmp.mapping.confirm({ select = true })
+    ['<CR>'] = cmp.mapping.confirm({ select = true }),
+    ["<C-Space>"] = cmp.mapping(cmp.mapping.complete(), {"i", "c"}),
   },
 
   sources = {
@@ -45,8 +46,38 @@ EOF
 
 lua << EOF
 local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
+local lua_language_server = vim.fn.stdpath("cache") .. "/../lua-language-server"
 
-require'lspconfig'.cssls.setup {
+local function get_lua_runtime()
+  local result = {};
+  for _, path in pairs(vim.api.nvim_list_runtime_paths()) do
+    local lua_path = path .. "/lua/";
+    if vim.fn.isdirectory(lua_path) then result[lua_path] = true end
+  end
+
+  result[vim.fn.expand("$VIMRUNTIME/lua")] = true
+
+  return result;
+end
+
+require("lspconfig").sumneko_lua.setup {
   capabilities = capabilities,
+  cmd = {
+    lua_language_server .. "/bin/Linux/lua-language-server",
+    "-E",
+    lua_language_server .. "/main.lua",
+  },
+  settings = {
+    Lua = {
+      runtime = {version = "LuaJIT", path = runtime_path},
+      diagnostics = {globals = {"vim"}},
+      workspace = {
+        library = get_lua_runtime(),
+        maxPreload = 10000,
+        preloadFileSize = 10000,
+      },
+      telemetry = {enable = false},
+    },
+  },
 }
 EOF
